@@ -9,12 +9,18 @@ using System.Threading.Tasks;
  * Ngày tạo: 15/05/2026
  * Mô tả: xây dựng chức năng quản lý tài khoản người dùng, 
 */
-public class User
+namespace CMS.Data.Entities
 {
-    // đối tượng lưu trữ thông tin tài khoản người dùng trong hệ thống
-    public int Id { get; set; } 
-    public string Username { get; set; } // lưu tên đăng nhập của người dùng
-    public string PasswordHash { get; set; }// lưu mật khẩu đã được mã hóa
-    public string FullName { get; set; } // lưu họ và tên người dùng
-    public string Role { get; set; } // Quản trị viên hoặc Biên tập viên
+    public class User
+    {
+        public int Id { get; set; }
+
+        public string Username { get; set; }
+
+        public string PasswordHash { get; set; }
+
+        public string FullName { get; set; }
+
+        public string Role { get; set; }
+    }
 }
