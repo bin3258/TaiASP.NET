@@ -1,25 +1,26 @@
-using CMS.Data;
+﻿using CMS.Data;
+using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CMS.Backend.Controllers
 {
-    public class HomeController : Controller
+    public class OrderController : Controller
     {
         private readonly ApplicationDbContext _context;
 
         // Inject DbContext
-        public HomeController(ApplicationDbContext context)
+        public OrderController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // Trang chủ
+        // Hiển thị danh sách đơn hàng
         public IActionResult Index()
         {
             // Lấy dữ liệu thật từ SQL
-            var posts = _context.Posts.ToList();
+            var orders = _context.Orders.ToList();
 
-            return View(posts);
+            return View(orders);
         }
     }
 }

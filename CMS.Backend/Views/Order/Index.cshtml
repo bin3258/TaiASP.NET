@@ -1,0 +1,90 @@
+﻿@model IEnumerable<CMS.Data.Entities.Order>
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h2 class="text-dark">
+            QUẢN LÝ ĐƠN HÀNG
+        </h2>
+
+        <button class="btn btn-success btn-sm">
+            + Tạo đơn hàng mới
+        </button>
+
+    </div>
+
+    <table class="table table-bordered table-hover shadow-sm">
+
+        <thead class="table-dark">
+
+            <tr>
+                <th>ID</th>
+                <th>Mã Khách Hàng</th>
+                <th>Ngày Đặt</th>
+                <th>Trạng Thái</th>
+                <th>Ghi Chú</th>
+                <th>Thao Tác</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @foreach (var order in Model)
+            {
+                <tr>
+
+                    <td>@order.Id</td>
+
+                    <td>@order.CustomerId</td>
+
+                    <td>
+                        @order.OrderDate.ToString("dd/MM/yyyy HH:mm")
+                    </td>
+
+                    <td>
+
+                        @if (order.Status == 0)
+                        {
+                            <span class="badge bg-warning text-dark">
+                                Chờ duyệt
+                            </span>
+                        }
+                        else if (order.Status == 1)
+                        {
+                            <span class="badge bg-primary">
+                                Đang giao
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">
+                                Hoàn thành
+                            </span>
+                        }
+
+                    </td>
+
+                    <td>@order.Notes</td>
+
+                    <td>
+
+                        <button class="btn btn-warning btn-sm">
+                            Sửa
+                        </button>
+
+                        <button class="btn btn-danger btn-sm">
+                            Xóa
+                        </button>
+
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+
+</div>
