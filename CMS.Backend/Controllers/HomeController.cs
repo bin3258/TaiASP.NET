@@ -1,5 +1,7 @@
 using CMS.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace CMS.Backend.Controllers
 {
@@ -7,19 +9,20 @@ namespace CMS.Backend.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        // Inject DbContext
         public HomeController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // Trang chủ
         public IActionResult Index()
         {
-            // Lấy dữ liệu thật từ SQL
-            var posts = _context.Posts.ToList();
+            var latestPosts = _context.Posts
+                .Include(p => p.Category)
+                .OrderByDescending(p => p.CreatedDate)
+                .Take(3)
+                .ToList();
 
-            return View(posts);
+            return View(latestPosts);
         }
     }
 }

@@ -1,40 +1,48 @@
 ﻿@model IEnumerable<CMS.Data.Entities.Post>
+@{
+    Layout = "_LayoutAdmin";
+}
 
 <div class="container mt-4">
-    <h2 class="mb-4 text-danger">
-        DANH SÁCH BÀI VIẾT MỚI NHẤT
-    </h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-dark">DANH SÁCH BÀI VIẾT</h2>
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Thêm bài viết mới
+        </a>
+    </div>
 
     <div class="row">
         @foreach (var item in Model)
         {
-            <div class="col-md-4 mb-3">
-                <div class="card shadow-sm">
+            <div class="col-md-4 mb-3 d-flex align-items-stretch">
+                <div class="card shadow-sm w-100 d-flex flex-column">
 
                     <img src="~/images/@item.ImageUrl"
                          class="card-img-top"
                          alt="Thumbnail"
-                         style="height:220px; object-fit:cover;">
+                         style="height: 200px; object-fit: cover;">
 
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-column flex-grow-1">
 
-                        <h5 class="card-title text-primary">
-                            @item.Title
-                        </h5>
+                        <div>
+                            <span class="badge bg-info text-dark mb-2">@item.Category?.Name</span>
+                            <h5 class="card-title text-primary text-truncate">@item.Title</h5>
+                            <p class="card-text text-truncate">@Html.Raw(item.Content)</p>
+                            <p class="text-muted small">Ngày đăng: @item.CreatedDate.ToString("dd/MM/yyyy")</p>
+                        </div>
+                        <div class="mt-auto pt-2">
+                            <a href="/Post/Details/@item.Id" class="btn btn-outline-primary btn-sm mb-1">Xem chi tiết</a>
 
-                        <p class="card-text text-truncate">
-                            @item.Content
-                        </p>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning mb-1">
+                                Sửa
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id"
+                               class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Chúng ta có chắc chắn muốn xóa bài viết này không?')">
+                                <i class="bi bi-trash"></i> Xóa
+                            </a>
 
-                        <p class="text-muted small">
-                            Ngày đăng:
-                            @item.CreatedDate.ToString("dd/MM/yyyy")
-                        </p>
-
-                        <a href="/Post/Details/@item.Id"
-                           class="btn btn-outline-primary btn-sm">
-                            Xem chi tiết
-                        </a>
+                        </div>
 
                     </div>
                 </div>

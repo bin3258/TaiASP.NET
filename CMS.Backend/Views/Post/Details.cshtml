@@ -1,8 +1,11 @@
 ﻿@model CMS.Data.Entities.Post
-
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Chi tiết bài viết"; // Sửa lại tiêu đề cho đúng nghĩa trang Details
+}
 <div class="container mt-5">
-
-    <a href="/Post" class="btn btn-secondary mb-4">
+    <a href="/Post/Index/@ViewBag.CategoryId"
+       class="btn btn-secondary mb-4">
         ← Quay lại
     </a>
 
@@ -12,17 +15,27 @@
             @Model.Title
         </h1>
 
+        <p>
+            <span class="badge bg-info text-dark">
+                @Model.Category?.Name
+            </span>
+        </p>
+
         <p class="text-muted">
             Ngày đăng:
             @Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")
         </p>
 
-        <img src="~/images/@Model.ImageUrl"
-             class="img-fluid rounded mb-4"
-             style="max-height:500px; object-fit:cover;">
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="~/images/@Model.ImageUrl"
+                 class="img-fluid rounded mb-4"
+                 style="max-height:500px; object-fit:cover;"
+                 alt="@Model.Title">
+        }
 
-        <div class="fs-5">
-            @Model.Content
+        <div class="fs-5 post-content">
+            @Html.Raw(Model.Content)
         </div>
 
     </div>
