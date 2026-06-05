@@ -1,4 +1,5 @@
 ﻿using CMS.Data;
+using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CMS.Backend.Controllers
@@ -87,6 +88,85 @@ namespace CMS.Backend.Controllers
             }
 
             return Ok(product);
+        }
+        /// <summary>
+        /// API 4: Thêm sản phẩm
+        /// POST: /api/Products
+        /// </summary>
+        [HttpPost]
+        public IActionResult CreateProduct([FromBody] Product product)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _context.Products.Add(product);
+            _context.SaveChanges();
+
+            return Ok(new
+            {
+                message = "Thêm sản phẩm thành công",
+                product.Id
+            });
+        }
+
+        /// <summary>
+        /// API 5: Cập nhật sản phẩm
+        /// PUT: /api/Products/{id}
+        /// </summary>
+        [HttpPut("{id}")]
+        public IActionResult UpdateProduct(int id, [FromBody] Product product)
+        {
+            var oldProduct = _context.Products.Find(id);
+
+            if (oldProduct == null)
+            {
+                return NotFound(new
+                {
+                    message = "Không tìm thấy sản phẩm"
+                });
+            }
+
+            oldProduct.Name = product.Name;
+            oldProduct.Description = product.Description;
+            oldProduct.Price = product.Price;
+            oldProduct.StockQuantity = product.StockQuantity;
+            oldProduct.ImageUrl = product.ImageUrl;
+            oldProduct.CategoryProductId = product.CategoryProductId;
+
+            _context.SaveChanges();
+
+            return Ok(new
+            {
+                message = "Cập nhật sản phẩm thành công"
+            });
+        }
+        /// <summary>
+        /// API 6: Xóa sản phẩm
+        /// DELETE: /api/Products/{id}
+        /// </summary>
+        [HttpDelete("{id}")]
+        public IActionResult DeleteProduct(int id)
+        {
+            var product = _context.Products.Find(id);
+
+            if (product == null)
+            {
+                return NotFound(new
+                {
+                    message = "Không tìm thấy sản phẩm"
+                });
+            }
+
+            _context.Products.Remove(product);
+
+            _context.SaveChanges();
+
+            return Ok(new
+            {
+                message = "Xóa sản phẩm thành công"
+            });
         }
     }
 }
