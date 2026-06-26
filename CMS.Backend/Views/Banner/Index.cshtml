@@ -1,0 +1,123 @@
+﻿@model IEnumerable<CMS.Data.Entities.Banner>
+@{
+    Layout = "_LayoutAdmin";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">Quản lý Banner</h3>
+        <a class="btn btn-primary" asp-action="Create">Tạo Banner mới</a>
+    </div>
+
+    <form id="reorderForm">
+        @Html.AntiForgeryToken()
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th style="width:40px;"></th>
+                            <th style="width:80px;">Thứ tự</th>
+                            <th>Tiêu đề</th>
+                            <th>Hình</th>
+                            <th>Hiển thị</th>
+                            <th style="width:220px;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="banner-list">
+                        @foreach (var b in Model.OrderBy(x => x.DisplayOrder))
+                        {
+                            <tr data-id="@b.Id">
+                                <td class="align-middle text-center drag-handle" style="cursor:grab;">
+                                    <i class="fa fa-bars"></i>
+                                </td>
+                                <td class="align-middle">@b.DisplayOrder</td>
+                                <td class="align-middle">@b.Title</td>
+                                <td class="align-middle">
+                                    @if (!string.IsNullOrEmpty(b.ImageUrl))
+                                    {
+                                        <img src="@b.ImageUrl" alt="" style="max-height:48px; max-width:160px;" />
+                                    }
+                                </td>
+                                <td class="align-middle">@((b.IsActive) ? "Yes" : "No")</td>
+                                <td class="align-middle">
+                                    <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@b.Id">Edit</a>
+
+                                    <form asp-action="MoveUp" asp-route-id="@b.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button class="btn btn-sm btn-light" title="Move Up">↑</button>
+                                    </form>
+
+                                    <form asp-action="MoveDown" asp-route-id="@b.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button class="btn btn-sm btn-light" title="Move Down">↓</button>
+                                    </form>
+
+                                    <form asp-action="Delete" asp-route-id="@b.Id" method="post" class="d-inline" onsubmit="return confirm('Xóa banner này?');">
+                                        @Html.AntiForgeryToken()
+                                        <button class="btn btn-sm btn-danger">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted p-4">Chưa có banner nào.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+
+    @await Html.PartialAsync("_Pagination")
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+    <script>
+        (function () {
+            const listEl = document.getElementById('banner-list');
+            if (!listEl) return;
+
+            // tạo Sortable
+            const sortable = Sortable.create(listEl, {
+                handle: '.drag-handle',
+                animation: 150,
+                onEnd: async function () {
+                    // thu thập thứ tự id mới
+                    const ids = Array.from(listEl.querySelectorAll('tr'))
+                        .map(tr => parseInt(tr.dataset.id, 10));
+
+                    // lấy anti-forgery token
+                    const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                    const token = tokenInput ? tokenInput.value : '';
+
+                    try {
+                        const response = await fetch('@Url.Action("Reorder", "Banner")', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': token
+                            },
+                            body: JSON.stringify(ids)
+                        });
+
+                        if (!response.ok) {
+                            console.error('Reorder failed', response);
+                            alert('Không thể lưu thứ tự. Thử lại.');
+                        } else {
+                            // Reload page để cập nhật thứ tự hiển thị (hoặc cập nhật DOM hiển thị thứ tự)
+                            location.reload();
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert('Lỗi mạng khi lưu thứ tự.');
+                    }
+                }
+            });
+        })();
+    </script>
+}

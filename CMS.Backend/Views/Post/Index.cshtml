@@ -3,50 +3,80 @@
     Layout = "_LayoutAdmin";
 }
 
-<div class="container mt-4">
+<div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="text-dark">DANH SÁCH BÀI VIẾT</h2>
-        <a asp-action="Create" class="btn btn-success">
+        <h2 class="text-dark mb-0">DANH SÁCH BÀI VIẾT</h2>
+        <a asp-action="Create" class="btn btn-success btn-sm">
             <i class="bi bi-plus-circle"></i> Thêm bài viết mới
         </a>
     </div>
 
-    <div class="row">
-        @foreach (var item in Model)
-        {
-            <div class="col-md-4 mb-3 d-flex align-items-stretch">
-                <div class="card shadow-sm w-100 d-flex flex-column">
+    <div class="table-responsive">
+        <table class="table table-hover shadow-sm border mb-0" style="font-size:0.85rem;">
+            <thead class="table-light">
+                <tr>
+                    <th style="width:50px;">ID</th>
+                    <th style="width:50px;">Ảnh</th>
+                    <th style="width:200px;">Tiêu đề</th>
+                    <th>Nội dung</th>
+                    <th style="width:100px;">Danh mục</th>
+                    <th style="width:100px;">Ngày đăng</th>
+                    <th style="width:140px;">Thao tác</th>
+                </tr>
+            </thead>
 
-                    <img src="~/images/@item.ImageUrl"
-                         class="card-img-top"
-                         alt="Thumbnail"
-                         style="height: 200px; object-fit: cover;">
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Id</td>
 
-                    <div class="card-body d-flex flex-column flex-grow-1">
+                        <td class="text-center">
+                            <img src="~/images/@item.ImageUrl"
+                                 width="40" height="40"
+                                 style="object-fit:cover; border-radius:4px;" />
+                        </td>
 
-                        <div>
-                            <span class="badge bg-info text-dark mb-2">@item.Category?.Name</span>
-                            <h5 class="card-title text-primary text-truncate">@item.Title</h5>
-                            <p class="card-text text-truncate">@Html.Raw(item.Content)</p>
-                            <p class="text-muted small">Ngày đăng: @item.CreatedDate.ToString("dd/MM/yyyy")</p>
-                        </div>
-                        <div class="mt-auto pt-2">
-                            <a href="/Post/Details/@item.Id" class="btn btn-outline-primary btn-sm mb-1">Xem chi tiết</a>
+                        <td>
+                            <strong style="font-size:0.85rem;">@item.Title</strong>
+                        </td>
 
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning mb-1">
-                                Sửa
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@item.Id"
-                               class="btn btn-sm btn-outline-danger"
-                               onclick="return confirm('Chúng ta có chắc chắn muốn xóa bài viết này không?')">
-                                <i class="bi bi-trash"></i> Xóa
-                            </a>
+                        <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                            @Html.Raw(item.Content)
+                        </td>
 
-                        </div>
+                        <td>
+                            <span class="badge bg-info text-dark" style="font-size:0.75rem;">
+                                @item.Category?.Name
+                            </span>
+                        </td>
 
-                    </div>
-                </div>
-            </div>
-        }
+                        <td style="font-size:0.8rem;">
+                            @item.CreatedDate.ToString("dd/MM/yyyy")
+                        </td>
+
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a href="/Post/Details/@item.Id"
+                                   class="btn btn-sm btn-outline-primary" style="font-size:0.75rem;padding:2px 8px;">
+                                    Chi tiết
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-outline-warning" style="font-size:0.75rem;padding:2px 8px;">
+                                    Sửa
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-outline-danger" style="font-size:0.75rem;padding:2px 8px;"
+                                   onclick="return confirm('Chúng ta có chắc chắn muốn xóa bài viết này không?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
+
+    @await Html.PartialAsync("_Pagination")
 </div>

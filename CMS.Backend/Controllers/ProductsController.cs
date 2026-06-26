@@ -28,7 +28,9 @@ namespace CMS.Backend.Controllers
                 {
                     p.Id,
                     p.Name,
+                    p.Description,
                     p.Price,
+                    p.StockQuantity,
                     p.ImageUrl
                 })
                 .ToList();
@@ -50,7 +52,9 @@ namespace CMS.Backend.Controllers
                 {
                     p.Id,
                     p.Name,
+                    p.Description,
                     p.Price,
+                    p.StockQuantity,
                     p.ImageUrl
                 })
                 .ToList();
@@ -167,6 +171,113 @@ namespace CMS.Backend.Controllers
             {
                 message = "Xóa sản phẩm thành công"
             });
+        }
+        [HttpGet("hot")]
+        public IActionResult GetHotProducts()
+        {
+            var products = _context.OrderDetails
+                .GroupBy(od => od.ProductId)
+                .Select(g => new
+                {
+                    ProductId = g.Key,
+                    TotalSold = g.Sum(x => x.Quantity)
+                })
+                .OrderByDescending(x => x.TotalSold)
+                .Take(10)
+                .Join(
+                    _context.Products,
+                    sold => sold.ProductId,
+                    product => product.Id,
+                    (sold, product) => new
+                    {
+                        product.Id,
+                        product.Name,
+                        product.Description,
+                        product.Price,
+                        product.ImageUrl,
+                        product.StockQuantity,
+                        TotalSold = sold.TotalSold
+                    }
+                )
+                .ToList();
+
+            return Ok(products);
+        }
+
+        [HttpGet("new")]
+        public IActionResult GetNewProducts()
+        {
+            var products = _context.Products
+                .OrderByDescending(p => p.Id)
+                .Take(10)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.Description,
+                    p.Price,
+                    p.ImageUrl
+                })
+                .ToList();
+
+            return Ok(products);
+        }
+        /// <summary>
+        /// API tìm kiếm sản phẩm
+        /// GET: api/Products/search
+        /// </summary>
+        [HttpGet("search")]
+        public IActionResult Search(
+            string? name,
+            decimal? minPrice,
+            decimal? maxPrice,
+            int? categoryId)
+        {
+            var query = _context.Products.AsQueryable();
+
+            // Tìm theo tên
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(p =>
+                    p.Name.Contains(name));
+            }
+
+            // Giá thấp nhất
+            if (minPrice.HasValue)
+            {
+                query = query.Where(p =>
+                    p.Price >= minPrice.Value);
+            }
+
+            // Giá cao nhất
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(p =>
+                    p.Price <= maxPrice.Value);
+            }
+
+            // Danh mục
+            if (categoryId.HasValue)
+            {
+                query = query.Where(p =>
+                    p.CategoryProductId == categoryId.Value);
+            }
+
+            var products = query
+                .OrderByDescending(p => p.Id)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.Description,
+                    p.Price,
+                    p.StockQuantity,
+                    p.ImageUrl,
+                    p.CategoryProductId
+                })
+                .ToList();
+
+            return Ok(products);
         }
     }
 }

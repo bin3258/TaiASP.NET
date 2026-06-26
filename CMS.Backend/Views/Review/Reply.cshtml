@@ -1,0 +1,52 @@
+@model CMS.Data.Entities.Review
+@{
+    Layout = "_LayoutAdmin";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">@(string.IsNullOrEmpty(Model.Reply) ? "PHẢN HỒI ĐÁNH GIÁ" : "SỬA PHẢN HỒI")</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <tr><th width="120">Sản phẩm</th><td>@Model.Product?.Name</td></tr>
+                <tr><th>Khách hàng</th><td>@Model.Customer?.FullName</td></tr>
+                <tr><th>Đánh giá</th>
+                    <td>
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= Model.Rating)
+                            {
+                                <i class="bi bi-star-fill text-warning"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-star text-muted"></i>
+                            }
+                        }
+                    </td>
+                </tr>
+                <tr><th>Nội dung</th><td>@Model.Comment</td></tr>
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <tr><th>Hình ảnh</th><td><img src="/images/reviews/@Model.ImageUrl" height="120" style="border-radius:6px;" /></td></tr>
+                }
+            </table>
+
+            <form asp-action="Reply" method="post">
+                <input type="hidden" asp-for="Id" />
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Phản hồi của bạn</label>
+                    <textarea name="reply" class="form-control" rows="4" placeholder="Nhập phản hồi...">@Model.Reply</textarea>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-info text-white">
+                        <i class="bi bi-check-lg"></i> Gửi phản hồi
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">Hủy bỏ</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

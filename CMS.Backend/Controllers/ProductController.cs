@@ -2,6 +2,7 @@
 using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Backend.Controllers
 {
@@ -16,10 +17,29 @@ namespace CMS.Backend.Controllers
         }
 
         // Hiển thị danh sách sản phẩm
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int? categoryId = null)
         {
-            // Lấy dữ liệu thật từ SQL Server
-            var products = _context.Products.ToList();
+            int pageSize = 10;
+            var query = _context.Products
+                .Include(p => p.CategoryProduct)
+                .AsQueryable();
+
+            if (categoryId != null && categoryId > 0)
+                query = query.Where(p => p.CategoryProductId == categoryId);
+
+            int totalItems = query.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            var products = query
+                .OrderByDescending(x => x.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.Page = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.SelectedCategoryId = categoryId;
+            ViewBag.CategoryList = _context.CategoriesProducts.ToList();
 
             return View(products);
         }

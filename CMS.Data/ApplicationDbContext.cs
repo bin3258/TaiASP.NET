@@ -17,7 +17,12 @@ namespace CMS.Data
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
-
+        // Banners table
+        public DbSet<Banner> Banners { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<Warehouse> Warehouses { get; set; }
+        public DbSet<ProductWarehouse> ProductWarehouses { get; set; }
+        public DbSet<Review> Reviews { get; set; }
     }
 }
 

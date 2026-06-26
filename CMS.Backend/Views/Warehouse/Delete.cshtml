@@ -1,0 +1,31 @@
+@model CMS.Data.Entities.Warehouse
+@{
+    Layout = "_LayoutAdmin";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">XÁC NHẬN XOÁ KHO HÀNG</h4>
+        </div>
+        <div class="card-body">
+            <p class="mb-3">Bạn có chắc chắn muốn xoá kho hàng <strong>@Model.Name</strong>?</p>
+            <table class="table table-bordered">
+                <tr><th>Tên kho</th><td>@Model.Name</td></tr>
+                <tr><th>Tỉnh/Thành phố</th><td>@Model.Province</td></tr>
+                <tr><th>Địa chỉ</th><td>@(Model.Address ?? "—")</td></tr>
+                <tr><th>Điện thoại</th><td>@(Model.Phone ?? "—")</td></tr>
+                <tr><th>Trạng thái</th><td>@(Model.Status ? "Hoạt động" : "Ngưng")</td></tr>
+            </table>
+            <form asp-action="DeleteConfirmed" method="post">
+                <input type="hidden" asp-for="Id" />
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Xác nhận xoá
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">Hủy bỏ</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

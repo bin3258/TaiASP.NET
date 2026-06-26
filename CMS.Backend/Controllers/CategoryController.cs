@@ -17,9 +17,22 @@ namespace CMS.Backend.Controllers
         }
 
         // Danh sách danh mục
-        public IActionResult Index()
+        public IActionResult Index(int page = 1)
         {
-            var data = _context.Categories.ToList();
+            int pageSize = 10;
+            var query = _context.Categories.AsQueryable();
+
+            int totalItems = query.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            var data = query
+                .OrderByDescending(x => x.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.Page = page;
+            ViewBag.TotalPages = totalPages;
 
             return View(data);
         }

@@ -3,91 +3,114 @@
     Layout = "_LayoutAdmin";
     ViewData["Title"] = "Cập nhật bài viết";
 }
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="text-dark">QUẢN LÝ SẢN PHẨM</h2>
-        <a asp-action="Create"
-           class="btn btn-success mb-3">
-            Thêm sản phẩm
-        </a>
-    </div>
-
-    <table class="table table-hover shadow-sm border">
-        <thead class="table-light">
-            <tr>
-                <th>ID</th>
-                <th>Tên Sản Phẩm</th>
-                <th>Mô Tả</th>
-                <th>Giá</th>
-                <th>Số Lượng</th>
-                <th>Hình Ảnh</th>
-                <th>Danh Mục</th>
-                <th>Thao Tác</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @foreach (var product in Model)
-            {
-                <tr>
-                    <td>@product.Id</td>
-
-                    <td>
-                        <strong>@product.Name</strong>
-                    </td>
-
-                    <td>@product.Description</td>
-
-                    <td>
-                        <span class="text-danger fw-bold">
-                            @product.Price.ToString("N0") VNĐ
-                        </span>
-                    </td>
-
-                    <td>
-                        @if (product.StockQuantity > 0)
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h2 class="text-dark mb-0">QUẢN LÝ SẢN PHẨM</h2>
+        <div class="d-flex gap-2 align-items-center">
+            <form method="get" class="d-flex gap-2 align-items-center">
+                <select name="categoryId" class="form-select form-select-sm" style="width:auto;" onchange="this.form.submit()">
+                    <option value="">Tất cả danh mục</option>
+                    @foreach (var cat in ViewBag.CategoryList)
+                    {
+                        if (ViewBag.SelectedCategoryId != null && (int)ViewBag.SelectedCategoryId == cat.Id)
                         {
-                            <span class="badge bg-success">
-                                @product.StockQuantity
-                            </span>
+                            <option value="@cat.Id" selected>@cat.Name</option>
                         }
                         else
                         {
-                            <span class="badge bg-danger">
-                                Hết hàng
-                            </span>
+                            <option value="@cat.Id">@cat.Name</option>
                         }
-                    </td>
+                    }
+                </select>
+            </form>
+            <a asp-action="Create" class="btn btn-success btn-sm">
+                Thêm sản phẩm
+            </a>
+        </div>
+    </div>
 
-                    <td>
-                        <img src="~/images/@product.ImageUrl"
-                             width="70"
-                             height="70"
-                             style="object-fit:cover; border-radius:8px;" />
-                    </td>
-
-                    <td>
-                        <span class="badge bg-info text-dark">
-                            @product.CategoryProductId
-                        </span>
-                    </td>
-
-                    <td>
-                        <a asp-action="Edit"
-                           asp-route-id="@product.Id"
-                           class="btn btn-sm btn-outline-warning">
-                            Sửa
-                        </a>
-
-                        <a asp-action="Delete"
-                           asp-route-id="@product.Id"
-                           class="btn btn-sm btn-outline-danger"
-                           onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
-                            Xóa
-                        </a>
-                    </td>
+    <div class="table-responsive">
+        <table class="table table-hover shadow-sm border mb-0" style="font-size:0.85rem;">
+            <thead class="table-light">
+                <tr>
+                    <th style="width:50px;">ID</th>
+                    <th style="width:180px;">Tên Sản Phẩm</th>
+                    <th>Mô Tả</th>
+                    <th style="width:110px;">Giá</th>
+                    <th style="width:60px;">SL</th>
+                    <th style="width:70px;">Hình</th>
+                    <th style="width:130px;">Danh Mục</th>
+                    <th style="width:140px;">Thao Tác</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+
+            <tbody>
+                @foreach (var product in Model)
+                {
+                    <tr>
+                        <td>@product.Id</td>
+
+                        <td>
+                            <strong>@product.Name</strong>
+                        </td>
+
+                        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">@product.Description</td>
+
+                        <td>
+                            <span class="text-danger fw-bold" style="font-size:0.8rem;">
+                                @product.Price.ToString("N0") VNĐ
+                            </span>
+                        </td>
+
+                        <td class="text-center">
+                            @if (product.StockQuantity > 0)
+                            {
+                                <span class="badge bg-success" style="font-size:0.75rem;">
+                                    @product.StockQuantity
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger" style="font-size:0.75rem;">
+                                    Hết
+                                </span>
+                            }
+                        </td>
+
+                        <td class="text-center">
+                            <img src="~/images/@product.ImageUrl"
+                                 width="50"
+                                 height="50"
+                                 style="object-fit:cover; border-radius:4px;" />
+                        </td>
+
+                        <td>
+                            <span class="badge bg-info text-dark" style="font-size:0.75rem;">
+                                @(product.CategoryProduct?.Name ?? $"#{product.CategoryProductId}")
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a asp-action="Edit"
+                                   asp-route-id="@product.Id"
+                                   class="btn btn-sm btn-outline-warning" style="font-size:0.75rem;padding:2px 8px;">
+                                    Sửa
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@product.Id"
+                                   class="btn btn-sm btn-outline-danger" style="font-size:0.75rem;padding:2px 8px;"
+                                   onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
+                                    Xóa
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @await Html.PartialAsync("_Pagination")
 </div>

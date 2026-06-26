@@ -1,0 +1,92 @@
+@model IEnumerable<CMS.Data.Entities.Review>
+@{
+    Layout = "_LayoutAdmin";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">QUẢN LÝ ĐÁNH GIÁ SẢN PHẨM</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th width="60">ID</th>
+                        <th>Sản phẩm</th>
+                        <th>Khách hàng</th>
+                        <th width="90">Sao</th>
+                        <th>Nội dung</th>
+                        <th width="120">Ngày</th>
+                        <th width="120">Phản hồi</th>
+                        <th width="140">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.Product?.Name</td>
+                                <td>@item.Customer?.FullName</td>
+                                <td class="text-center">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= item.Rating)
+                                        {
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star text-muted"></i>
+                                        }
+                                    }
+                                </td>
+                                <td style="max-width:250px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                    @item.Comment
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <br /><img src="/images/reviews/@item.ImageUrl" width="50" style="border-radius:4px;margin-top:4px;" />
+                                    }
+                                </td>
+                                <td>@item.CreatedDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Reply))
+                                    {
+                                        <span class="badge bg-success">Đã phản hồi</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Chưa</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (string.IsNullOrEmpty(item.Reply))
+                                    {
+                                        <a asp-action="Reply" asp-route-id="@item.Id"
+                                           class="btn btn-info btn-sm">Phản hồi</a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-action="Reply" asp-route-id="@item.Id"
+                                           class="btn btn-outline-info btn-sm">Sửa phản hồi</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">Chưa có đánh giá nào</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @await Html.PartialAsync("_Pagination")
+        </div>
+    </div>
+</div>

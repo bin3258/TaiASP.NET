@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<CMS.Data.Entities.Order>
+
 @{
     Layout = "_LayoutAdmin";
 }
@@ -6,30 +7,20 @@
 <div class="container mt-4">
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-
-        <h2 class="text-dark">
-            QUẢN LÝ ĐƠN HÀNG
-        </h2>
-
-        <button class="btn btn-success btn-sm">
-            + Tạo đơn hàng mới
-        </button>
-
+        <h2>QUẢN LÝ ĐƠN HÀNG</h2>
     </div>
 
-    <table class="table table-bordered table-hover shadow-sm">
+    <table class="table table-bordered table-hover">
 
         <thead class="table-dark">
-
             <tr>
-                <th>ID</th>
-                <th>Mã Khách Hàng</th>
+                <th>Mã Đơn</th>
+                <th>Khách Hàng</th>
                 <th>Ngày Đặt</th>
                 <th>Trạng Thái</th>
                 <th>Ghi Chú</th>
-                <th>Thao Tác</th>
+                <th width="350">Thao Tác</th>
             </tr>
-
         </thead>
 
         <tbody>
@@ -38,7 +29,7 @@
             {
                 <tr>
 
-                    <td>@order.Id</td>
+                    <td>#@order.Id</td>
 
                     <td>@order.CustomerId</td>
 
@@ -48,39 +39,101 @@
 
                     <td>
 
-                        @if (order.Status == 0)
+                        @switch (order.Status)
                         {
-                            <span class="badge bg-warning text-dark">
-                                Chờ duyệt
-                            </span>
-                        }
-                        else if (order.Status == 1)
-                        {
-                            <span class="badge bg-primary">
-                                Đang giao
-                            </span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-success">
-                                Hoàn thành
-                            </span>
+                            case 0:
+                                <span class="badge bg-warning text-dark">
+                                    Chờ duyệt
+                                </span>
+                                break;
+
+                            case 1:
+                                <span class="badge bg-info">
+                                    Đã duyệt
+                                </span>
+                                break;
+
+                            case 2:
+                                <span class="badge bg-primary">
+                                    Đang giao
+                                </span>
+                                break;
+
+                            case 3:
+                                <span class="badge bg-success">
+                                    Hoàn thành
+                                </span>
+                                break;
+
+                            case 4:
+                                <span class="badge bg-danger">
+                                    Đã hủy
+                                </span>
+                                break;
                         }
 
                     </td>
 
                     <td>@order.Notes</td>
-
                     <td>
+                        <div class="d-flex gap-1 flex-wrap">
 
-                        <button class="btn btn-warning btn-sm">
-                            Sửa
-                        </button>
+                            <a asp-action="Detail"
+                               asp-route-id="@order.Id"
+                               class="btn btn-secondary btn-sm">
+                                Chi tiết
+                            </a>
 
-                        <button class="btn btn-danger btn-sm">
-                            Xóa
-                        </button>
+                            @if (order.Status == 0)
+                            {
 
+                                <a asp-action="Detail"
+                                   asp-route-id="@order.Id"
+                                   class="btn btn-success btn-sm">
+                                    Duyệt
+                                </a>
+
+                                <form asp-action="Cancel"
+                                      asp-route-id="@order.Id"
+                                      method="post">
+
+                                    <button type="submit"
+                                            class="btn btn-danger btn-sm">
+                                        Hủy
+                                    </button>
+
+                                </form>
+                            }
+
+                            @if (order.Status == 1)
+                            {
+                                <form asp-action="Shipping"
+                                      asp-route-id="@order.Id"
+                                      method="post">
+
+                                    <button type="submit"
+                                            class="btn btn-primary btn-sm">
+                                        Giao hàng
+                                    </button>
+
+                                </form>
+                            }
+
+                            @if (order.Status == 2)
+                            {
+                                <form asp-action="Delivered"
+                                      asp-route-id="@order.Id"
+                                      method="post">
+
+                                    <button type="submit"
+                                            class="btn btn-success btn-sm">
+                                        Hoàn thành
+                                    </button>
+
+                                </form>
+                            }
+
+                        </div>
                     </td>
 
                 </tr>
@@ -90,4 +143,5 @@
 
     </table>
 
+    @await Html.PartialAsync("_Pagination")
 </div>

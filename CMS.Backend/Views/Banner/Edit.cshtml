@@ -1,0 +1,78 @@
+﻿@model CMS.Data.Entities.Banner
+@{
+    Layout = "_LayoutAdmin";
+}
+
+<div class="container">
+    <h3>Chỉnh sửa Banner</h3>
+
+    @* Hiển thị lỗi chung *@
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <ul>
+                @foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@e.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label class="form-label">Tiêu đề</label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Ảnh hiện tại</label>
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <div>
+                    <img src="@Model.ImageUrl" alt="" style="max-height:120px; max-width:320px;" />
+                </div>
+            }
+            <label class="form-label mt-2">Thay ảnh (tải từ máy)</label>
+            <input type="file" name="imageFile" class="form-control" accept="image/*" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Thứ tự hiển thị (nhập để thay đổi, để trống giữ nguyên)</label>
+            <div class="mb-3">
+                <label class="form-label">Thứ tự hiển thị</label>
+
+                <input name="displayOrder"
+                       type="number"
+                       min="0"
+                       class="form-control"
+                       value="@Model.DisplayOrder" />
+
+                <small class="text-muted">
+                    0 = Hiển thị đầu tiên, 1 = Thứ hai, 2 = Thứ ba...
+                </small>
+            </div>
+            <small class="form-text text-muted">Để trống để giữ thứ tự hiện tại.</small>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Mô tả</label>
+            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="form-check mb-3">
+            <input asp-for="IsActive" class="form-check-input" />
+            <label class="form-check-label">Hiển thị</label>
+        </div>
+
+        <button class="btn btn-primary">Lưu</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Hủy</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -29,10 +29,15 @@ namespace CMS.Data.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal UnitPrice { get; set; } // Giá tại thời điểm mua
 
+        public int? WarehouseId { get; set; } // Kho xuất hàng
+
         [ForeignKey("OrderId")]
         public virtual Order? Order { get; set; }
 
         [ForeignKey("ProductId")]
         public virtual Product? Product { get; set; }
+
+        [ForeignKey("WarehouseId")]
+        public virtual Warehouse? Warehouse { get; set; }
     }
 }

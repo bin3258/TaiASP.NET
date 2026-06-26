@@ -1,0 +1,38 @@
+@model CMS.Data.Entities.ProductWarehouse
+@{
+    Layout = "_LayoutAdmin";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0">SỬA TỒN KHO</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ProductId" />
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Sản phẩm</label>
+                    <input class="form-control" value="@Model.Product?.Name" readonly />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Kho hàng</label>
+                    <select asp-for="WarehouseId" asp-items="ViewBag.WarehouseList" class="form-select" disabled>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="StockQuantity" class="form-label fw-bold">Số lượng tồn kho</label>
+                    <input asp-for="StockQuantity" class="form-control" min="0" />
+                    <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-save"></i> Cập nhật
+                    </button>
+                    <a asp-action="Index" asp-route-productId="@Model.ProductId" class="btn btn-secondary">Hủy bỏ</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

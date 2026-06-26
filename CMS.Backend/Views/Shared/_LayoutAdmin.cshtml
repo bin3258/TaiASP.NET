@@ -13,17 +13,22 @@
             color: white;
         }
 
-            .sidebar a {
+            .sidebar a:not(.btn) {
                 color: #adb5bd;
                 text-decoration: none;
                 display: block;
                 padding: 10px 20px;
             }
 
-                .sidebar a:hover {
+                .sidebar a:not(.btn):hover {
                     background-color: #343a40;
                     color: white;
                 }
+
+            .sidebar a.btn {
+                display: inline-block;
+                padding: 0.25rem 0.5rem;
+            }
 
             .sidebar .active {
                 background-color: #0d6efd;
@@ -37,20 +42,19 @@
             <nav class="col-md-3 col-lg-2 sidebar p-0">
                 <div class="p-3 text-center border-bottom border-secondary">
                     <h4 class="text-white">TaiCMS Admin</h4>
-                    <ul class="navbar-nav ms-auto">
+                    <div class="mt-2 pt-2 border-top border-secondary">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <span class="nav-link text-dark">
-                                    Chào, <strong>@User.FindFirst("FullName")?.Value</strong> (@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value)
-                                </span>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-outline-danger btn-sm" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
-                            </li>
+                            <div class="text-white-50 small">Xin chào</div>
+                            <div class="text-white fw-bold">@User.FindFirst("FullName")?.Value</div>
+                            <div class="text-white-50 small mb-2">
+                                <i class="bi bi-shield-check"></i> @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                            </div>
+                            <a class="btn btn-outline-danger btn-sm w-100" asp-controller="Account" asp-action="Logout">
+                                <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                            </a>
                         }
-                    </ul>
-
+                    </div>
                 </div>
                 <div class="mt-3">
                     <a asp-controller="Home" asp-action="Index">
@@ -65,11 +69,17 @@
                     <a asp-controller="User" asp-action="Index">
                         <i class="bi bi-people"></i> Quản lý Thành viên
                     </a>
-                    <a asp-controller="ProductCategory" asp-action="Index">
+                    <a asp-controller="CategoryProduct" asp-action="Index">
                         <i class="bi bi-grid"></i> Danh mục sản phẩm
                     </a>
                     <a asp-controller="Product" asp-action="Index">
                         <i class="bi bi-box-seam"></i> Sản phẩm
+                    </a>
+                    <a asp-controller="Warehouse" asp-action="Index">
+                        <i class="bi bi-building"></i> Kho hàng
+                    </a>
+                    <a asp-controller="ProductWarehouse" asp-action="Index">
+                        <i class="bi bi-boxes"></i> Tồn kho
                     </a>
                     <a asp-controller="Customer" asp-action="Index">
                         <i class="bi bi-people"></i> Khách hàng
@@ -77,9 +87,13 @@
                     <a asp-controller="Order" asp-action="Index">
                         <i class="bi bi-grid"></i> Đơn hàng
                     </a>
-                    <a asp-controller="OrderDetail" asp-action="Index">
-                        <i class="bi bi-grid"></i> Đơn hàng chi tiết
+                    <a asp-controller="Banner" asp-action="Index">
+                        <i class="bi bi-grid"></i> Banner
                     </a>
+                    <a asp-controller="Review" asp-action="Index">
+                        <i class="bi bi-chat-dots"></i> Đánh giá
+                    </a>
+
 
                 </div>
             </nav>

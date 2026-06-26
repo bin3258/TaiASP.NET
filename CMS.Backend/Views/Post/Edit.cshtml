@@ -56,7 +56,7 @@
                             <button type="submit" class="btn btn-warning text-dark fw-bold">
                                 <i class="bi bi-cloud-arrow-up"></i> Cập nhật bài viết
                             </button>
-                            <a asp-action="Index" asp-route-id="@Model.CategoryId" class="btn btn-secondary">
+                            <a asp-action="Index" class="btn btn-secondary">
                                 <i class="bi bi-arrow-left"></i> Quay lại danh sách
                             </a>
                         </div>
@@ -66,3 +66,20 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/@@ckeditor/ckeditor5-build-classic@39.0.1/build/ckeditor.js"></script>
+
+    <style>
+        .ck-editor__editable_inline {
+            min-height: 300px !important;
+        }
+    </style>
+
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#Content'))
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+}

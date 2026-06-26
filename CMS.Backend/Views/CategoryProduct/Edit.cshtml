@@ -1,0 +1,65 @@
+@model CMS.Data.Entities.CategoryProduct
+@{
+    Layout = "_LayoutAdmin";
+}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-warning text-white">
+            <h4 class="mb-0">CHỈNH SỬA DANH MỤC SẢN PHẨM</h4>
+        </div>
+
+        <div class="card-body">
+
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-bold">Tên danh mục</label>
+                    <input asp-for="Name" class="form-control" placeholder="Nhập tên danh mục" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold">Mô tả</label>
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Nhập mô tả danh mục (không bắt buộc)"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Icon hiện tại</label>
+                    <div>
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img src="~/images/@Model.ImageUrl" width="60" height="60" style="object-fit:cover;border-radius:4px;" />
+                        }
+                        else
+                        {
+                            <span class="text-muted">Chưa có icon</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Thay đổi icon</label>
+                    <input type="file" name="uploadImage" class="form-control" accept="image/*" />
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-check-lg"></i> Cập nhật thay đổi
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        Hủy bỏ
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

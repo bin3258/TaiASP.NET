@@ -18,31 +18,34 @@ namespace CMS.Backend.Controllers
         }
 
         // SỬA TẠI ĐÂY: Cho phép id bằng null để hiển thị tất cả bài viết từ menu Sidebar
-        public IActionResult Index(int? id)
+        public IActionResult Index(int? id, int page = 1)
         {
-            List<Post> posts;
+            int pageSize = 10;
+            var query = _context.Posts
+                .Include(p => p.Category)
+                .AsQueryable();
 
-            if (id == null || id == 0)
+            if (id != null && id != 0)
             {
-                // Nếu bấm từ Sidebar (không có id), lấy TẤT CẢ bài viết trong hệ thống
-                posts = _context.Posts
-                                .Include(p => p.Category)
-                                .OrderByDescending(p => p.CreatedDate)
-                                .ToList();
-
-                ViewBag.CurrentCategoryId = null; // Đánh dấu không lọc
+                query = query.Where(p => p.CategoryId == id);
+                ViewBag.CurrentCategoryId = id;
             }
             else
             {
-                // Nếu đi từ danh mục cụ thể, lọc theo CategoryId
-                posts = _context.Posts
-                                .Where(p => p.CategoryId == id)
-                                .Include(p => p.Category)
-                                .OrderByDescending(p => p.CreatedDate)
-                                .ToList();
-
-                ViewBag.CurrentCategoryId = id; // Lưu lại ID danh mục hiện tại
+                ViewBag.CurrentCategoryId = null;
             }
+
+            int totalItems = query.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            var posts = query
+                .OrderByDescending(p => p.CreatedDate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.Page = page;
+            ViewBag.TotalPages = totalPages;
 
             return View(posts);
         }
@@ -121,7 +124,7 @@ namespace CMS.Backend.Controllers
                 _context.Posts.Add(model);
                 _context.SaveChanges();
 
-                return RedirectToAction("Index", new { id = model.CategoryId });
+                return RedirectToAction("Index");
             }
 
             ViewBag.CategoryList = new SelectList(_context.Categories, "Id", "Name", model.CategoryId);
@@ -189,7 +192,7 @@ namespace CMS.Backend.Controllers
                 _context.Posts.Update(model);
                 _context.SaveChanges();
 
-                return RedirectToAction("Index", new { id = model.CategoryId });
+                return RedirectToAction("Index");
             }
 
             ViewBag.CategoryList = new SelectList(_context.Categories, "Id", "Name", model.CategoryId);
@@ -202,12 +205,10 @@ namespace CMS.Backend.Controllers
             var post = _context.Posts.Find(id);
             if (post != null)
             {
-                int categoryId = post.CategoryId;
-
                 _context.Posts.Remove(post);
                 _context.SaveChanges();
 
-                return RedirectToAction("Index", new { id = categoryId });
+                return RedirectToAction("Index");
             }
             return RedirectToAction("Index");
         }

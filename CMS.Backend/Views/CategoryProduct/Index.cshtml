@@ -3,54 +3,77 @@
     Layout = "_LayoutAdmin";
 }
 
-<div class="container mt-4">
+<div class="container-fluid mt-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="text-dark">QUẢN LÝ DANH MỤC SẢN PHẨM</h2>
+    <div class="card shadow">
 
-        <button class="btn btn-success btn-sm">
-            + Thêm danh mục mới
-        </button>
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">QUẢN LÝ DANH MỤC SẢN PHẨM</h4>
+            <a asp-action="Create" class="btn btn-light">
+                + Thêm danh mục mới
+            </a>
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered table-hover align-middle">
+
+                <thead class="table-dark">
+                    <tr>
+                        <th width="70">ID</th>
+                        <th width="60">Icon</th>
+                        <th>Tên Danh Mục</th>
+                        <th>Mô Tả</th>
+                        <th width="180">Thao Tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <img src="~/images/@item.ImageUrl" width="40" height="40" style="object-fit:cover;border-radius:4px;" />
+                                    }
+                                </td>
+                                <td><strong>@item.Name</strong></td>
+                                <td>@(string.IsNullOrEmpty(item.Description) ? "Chưa có mô tả" : item.Description)</td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a asp-action="Edit" asp-route-id="@item.Id"
+                                           class="btn btn-warning btn-sm">
+                                            Sửa
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id"
+                                           class="btn btn-danger btn-sm"
+                                           onclick="return confirm('Bạn có chắc muốn xóa danh mục này?')">
+                                            Xóa
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">
+                                Chưa có danh mục nào
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+            @await Html.PartialAsync("_Pagination")
+        </div>
+
     </div>
-
-    <table class="table table-hover table-bordered shadow-sm">
-
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Tên Danh Mục</th>
-                <th>Mô Tả</th>
-                <th>Thao Tác</th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.Id</td>
-
-                    <td>
-                        <strong>@item.Name</strong>
-                    </td>
-
-                    <td>@item.Description</td>
-
-                    <td>
-                        <button class="btn btn-warning btn-sm">
-                            Sửa
-                        </button>
-
-                        <button class="btn btn-danger btn-sm">
-                            Xóa
-                        </button>
-                    </td>
-                </tr>
-            }
-
-        </tbody>
-
-    </table>
 
 </div>
