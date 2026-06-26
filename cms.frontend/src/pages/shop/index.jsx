@@ -16,11 +16,13 @@ const ShopPage = () => {
     const [selectedCategory, setSelectedCategory] = useState(
         categoryParam ? Number(categoryParam) : null
     );
+    const [searchQuery, setSearchQuery] = useState('');
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [sortOrder, setSortOrder] = useState('');
     const debounceRef = useRef(null);
 
     useEffect(() => {
@@ -33,11 +35,19 @@ const ShopPage = () => {
         try {
             setLoading(true);
             const params = {};
+            const trimmedQuery = searchQuery.trim();
+
+            if (trimmedQuery) params.name = trimmedQuery;
             if (selectedCategory) params.categoryId = selectedCategory;
             if (minPrice !== '') params.minPrice = Number(minPrice);
             if (maxPrice !== '') params.maxPrice = Number(maxPrice);
+            if (sortOrder) {
+                params.sortBy = 'price';
+                params.sortDir = sortOrder;
+            }
 
-            const data = Object.keys(params).length > 0
+            const hasFilters = Object.keys(params).length > 0;
+            const data = hasFilters
                 ? await productService.searchProducts(params)
                 : await productService.getAllProducts();
             setProducts(Array.isArray(data) ? data : []);
@@ -47,7 +57,15 @@ const ShopPage = () => {
         } finally {
             setLoading(false);
         }
-    }, [selectedCategory, minPrice, maxPrice]);
+    }, [searchQuery, selectedCategory, minPrice, maxPrice, sortOrder]);
+
+    const hasActiveFilters = Boolean(
+        searchQuery.trim() || selectedCategory || minPrice !== '' || maxPrice !== '' || sortOrder
+    );
+
+    const emptyMessage = searchQuery.trim()
+        ? `Không tìm thấy sản phẩm cho từ khóa "${searchQuery.trim()}".`
+        : 'Không tìm thấy sản phẩm phù hợp với bộ lọc.';
 
     useEffect(() => {
         if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -73,6 +91,11 @@ const ShopPage = () => {
                         totalProducts={products.length}
                         selectedCategory={selectedCategory}
                         categories={categories}
+                        searchQuery={searchQuery}
+                        sortOrder={sortOrder}
+                        onSearchChange={setSearchQuery}
+                        onSearchClear={() => setSearchQuery('')}
+                        onSortChange={setSortOrder}
                     />
                     <div className="shop-content">
                         <aside className="shop-sidebar">
@@ -87,6 +110,7 @@ const ShopPage = () => {
                             <LoadingOrEmpty
                                 loading={loading}
                                 isEmpty={!loading && products.length === 0}
+                                message={hasActiveFilters ? emptyMessage : undefined}
                             />
                             {!loading && products.length > 0 && (
                                 <ProductList products={products} />

@@ -231,40 +231,49 @@ namespace CMS.Backend.Controllers
             string? name,
             decimal? minPrice,
             decimal? maxPrice,
-            int? categoryId)
+            int? categoryId,
+            string? sortBy,
+            string? sortDir)
         {
             var query = _context.Products.AsQueryable();
 
-            // Tìm theo tên
             if (!string.IsNullOrEmpty(name))
             {
                 query = query.Where(p =>
                     p.Name.Contains(name));
             }
 
-            // Giá thấp nhất
             if (minPrice.HasValue)
             {
                 query = query.Where(p =>
                     p.Price >= minPrice.Value);
             }
 
-            // Giá cao nhất
             if (maxPrice.HasValue)
             {
                 query = query.Where(p =>
                     p.Price <= maxPrice.Value);
             }
 
-            // Danh mục
             if (categoryId.HasValue)
             {
                 query = query.Where(p =>
                     p.CategoryProductId == categoryId.Value);
             }
 
+            bool ascending = sortDir?.ToLower() == "asc";
+            if (sortBy?.ToLower() == "price")
+            {
+                query = ascending
+                    ? query.OrderBy(p => p.Price)
+                    : query.OrderByDescending(p => p.Price);
+            }
+            else
+            {
+                query = query.OrderByDescending(p => p.Id);
+            }
+
             var products = query
-                .OrderByDescending(p => p.Id)
                 .Select(p => new
                 {
                     p.Id,

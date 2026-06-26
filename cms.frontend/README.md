@@ -1,70 +1,155 @@
-# Getting Started with Create React App
+# 🏪 TaiCMS - Hệ thống quản lý bán hàng (Shop NUTRI.)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Giới thiệu
 
-## Available Scripts
+**TaiCMS** là một hệ thống quản lý nội dung và bán hàng trực tuyến (E-commerce CMS), được xây dựng với kiến trúc:
 
-In the project directory, you can run:
+- **Frontend:** React 19 (SPA)
+- **Backend API:** ASP.NET Core 8 (Web API + MVC)
+- **Cơ sở dữ liệu:** SQL Server + Entity Framework Core 8
 
-### `npm start`
+Hệ thống cung cấp giao diện khách hàng (storefront) và trang quản trị (admin) giúp quản lý sản phẩm, đơn hàng, khách hàng, bài viết, banner, đánh giá,... Dưới tên thương hiệu **Shop NUTRI.**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Công nghệ sử dụng
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Backend (`CMS.Backend` + `CMS.Data`)
 
-### `npm test`
+| Công nghệ | Mục đích |
+|-----------|----------|
+| .NET 8 / ASP.NET Core | Nền tảng backend |
+| Entity Framework Core 8 | ORM, truy vấn CSDL |
+| SQL Server (LocalDB) | Cơ sở dữ liệu |
+| BCrypt.Net-Next | Mã hóa mật khẩu |
+| Swagger / OpenAPI | Tài liệu API tự động |
+| SendGrid API | Gửi email (xác nhận đơn hàng, quên mật khẩu) |
+| Cookie Authentication | Xác thực admin |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Frontend (`cms.frontend`)
 
-### `npm run build`
+| Công nghệ | Mục đích |
+|-----------|----------|
+| React 19 | Thư viện UI |
+| React Router DOM 7 | Điều hướng SPA |
+| Axios | HTTP client gọi API |
+| Bootstrap 5 | CSS framework (admin) |
+| CSS thuần | Tùy chỉnh giao diện (storefront) |
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Cấu trúc dự án
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+TaiCMS_Solution/
+├── CMS.Backend/              # Backend ASP.NET Core
+│   ├── Controllers/          # API + MVC controllers (24 controllers)
+│   ├── Services/             # EmailService, IEmailService
+│   ├── Settings/             # EmailSettings
+│   ├── Views/                # Razor Views (admin trang)
+│   ├── wwwroot/              # Static files (images, libs)
+│   └── Program.cs            # Entry point
+├── CMS.Data/                 # Data Layer
+│   └── Entities/             # 14 entity classes
+├── cms.frontend/             # Frontend React
+│   └── src/
+│       ├── api/              # Axios client config
+│       ├── components/       # Shared components (Header, Footer, Login,...)
+│       ├── contexts/         # AuthContext, CartContext
+│       ├── pages/            # Page components (shop, cart, orders,...)
+│       └── services/         # API service modules
+└── TaiCMS_Solution.sln       # Solution file
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Tính năng chính
 
-### `npm run eject`
+### Storefront (Giao diện khách hàng)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- 🏠 Trang chủ với banner, sản phẩm nổi bật, bài viết mới
+- 🛍️ Danh mục sản phẩm + tìm kiếm + lọc giá + sắp xếp
+- 🛒 Giỏ hàng (thêm, sửa, xóa)
+- 💳 Thanh toán / Đặt hàng
+- 📋 Quản lý đơn hàng cá nhân + đánh giá sản phẩm
+- 👤 Đăng ký / Đăng nhập / Quên mật khẩu
+- ✍️ Blog / Tin tức
+- 📞 Liên hệ + Giới thiệu
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Admin Panel (Giao diện quản trị)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- 📊 Dashboard
+- 📦 Quản lý sản phẩm, danh mục sản phẩm
+- 📝 Quản lý bài viết, danh mục bài viết
+- 👥 Quản lý khách hàng, thành viên
+- 🚚 Quản lý đơn hàng
+- 🏭 Quản lý kho hàng, tồn kho
+- 🖼️ Quản lý banner
+- ⭐ Quản lý đánh giá sản phẩm
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Cài đặt & Chạy
 
-## Learn More
+### Yêu cầu
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [Node.js 18+](https://nodejs.org/)
+- [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (Express hoặc LocalDB)
+- Trình duyệt web hiện đại
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 1. Cấu hình cơ sở dữ liệu
 
-### Code Splitting
+Sửa chuỗi kết nối trong `CMS.Backend/appsettings.json`:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```json
+"ConnectionStrings": {
+    "DefaultConnection": "Server=YOUR_SERVER;Database=TaiCMS_DB;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
+}
+```
 
-### Analyzing the Bundle Size
+### 2. Chạy migration & tạo database
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```bash
+cd CMS.Backend
+dotnet ef database update
+```
 
-### Making a Progressive Web App
+### 3. Chạy Backend
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```bash
+cd CMS.Backend
+dotnet run
+```
 
-### Advanced Configuration
+Backend chạy tại `https://localhost:7068` — Swagger UI tại `/swagger`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### 4. Chạy Frontend
 
-### Deployment
+```bash
+cd cms.frontend
+npm install
+npx react-scripts start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Frontend chạy tại `http://localhost:3000`.
 
-### `npm run build` fails to minify
+> **Lưu ý:** Nếu dùng **Bun**, `react-scripts` có thể bị crash. Dùng `rundev.bat` hoặc `rundev.ps1` để bypass.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### 5. Đăng nhập Admin
+
+Truy cập `https://localhost:7068/Account/Login`.
+
+### API Endpoints chính
+
+| Method | Endpoint | Mô tả |
+|--------|----------|-------|
+| GET | `/api/Products` | Danh sách sản phẩm |
+| GET | `/api/Products/search` | Tìm kiếm + lọc + sắp xếp |
+| GET | `/api/Products/{id}` | Chi tiết sản phẩm |
+| GET | `/api/Products/hot` | Sản phẩm bán chạy |
+| POST | `/api/Auth/CustomerLogin` | Đăng nhập khách hàng |
+| POST | `/api/Auth/CustomerRegister` | Đăng ký khách hàng |
+| POST | `/api/Auth/ForgotPassword` | Quên mật khẩu |
+| GET/POST | `/api/Carts` | Giỏ hàng |
+| GET/POST | `/api/Orders` | Đơn hàng |
+| GET/POST | `/api/Reviews` | Đánh giá sản phẩm |
+| PUT/DELETE | `/api/Reviews/{id}` | Sửa/xóa đánh giá |
+
+## Lưu ý phát triển
+
+- Backend dùng cả MVC (cho admin) và Web API (cho React) — không nhầm lẫn giữa `ProductsController` (API) và `ProductController` (MVC).
+- Cookie Authentication dùng cho admin; API khách hàng dùng cơ chế stateless (không JWT).
+- Khi rebuild backend, có thể cần `Stop-Process -Name "CMS.Backend"` để giải phóng DLL.
